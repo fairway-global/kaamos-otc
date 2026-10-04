@@ -399,12 +399,26 @@ export class CardanoHTLCBrowser {
   }
 }
 
-/** Resolve the first Eternl CIP-30 provider, or a named fallback. */
+/**
+ * Resolve a CIP-30 provider: the named one if given, then the known wallets in
+ * preference order, then any other injected provider that exposes `enable`
+ * (e.g. 1AM at `window.cardano['1am']`).
+ */
 export const resolveCIP30Wallet = (preferred?: string): CIP30Wallet | undefined => {
   const cardano = (window as unknown as { cardano?: Record<string, CIP30Wallet> }).cardano;
   if (!cardano) return undefined;
   if (preferred && cardano[preferred]) return cardano[preferred];
-  return cardano.eternl ?? cardano.lace ?? cardano.nami ?? cardano.flint ?? cardano.typhon;
+  return (
+    cardano.eternl ??
+    cardano.lace ??
+    cardano.nami ??
+    cardano.flint ??
+    cardano.typhon ??
+    cardano['1am'] ??
+    Object.values(cardano).find(
+      (wallet): wallet is CIP30Wallet => !!wallet && typeof wallet === 'object' && typeof wallet.enable === 'function',
+    )
+  );
 };
 
 export { sha256Hex as sha256HexOfHexString };

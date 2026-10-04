@@ -148,7 +148,7 @@ export const SwapProvider: React.FC<Props> = ({ logger, children }) => {
           }
           const wallet = resolveCIP30Wallet(walletName);
           if (!wallet) {
-            throw new Error('No CIP-30 Cardano wallet found. Install Eternl, Lace, Nami, or Flint and refresh.');
+            throw new Error('No CIP-30 Cardano wallet found. Install Eternl, Lace, Nami, Flint, or 1AM and refresh.');
           }
           logger.info({ wallet: wallet.name }, 'Enabling Cardano wallet');
           const api = await wallet.enable();
